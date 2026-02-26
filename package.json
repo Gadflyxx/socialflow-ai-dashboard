@@ -8,7 +8,10 @@
     "build": "tsc && npx vite build",
     "preview": "npx vite preview",
     "electron:dev": "concurrently \"npm run dev\" \"npx wait-on tcp:5173 && npx electron .\"",
-    "electron:build": "npx vite build && electron-builder"
+    "electron:build": "npx vite build && electron-builder",
+    "docs:dev": "cd docs && npm install && npm run docs:dev",
+    "docs:build": "cd docs && npm install && npm run docs:build",
+    "docs:preview": "cd docs && npm run docs:preview"
   },
   "keywords": [],
   "author": "",
