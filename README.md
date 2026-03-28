@@ -63,6 +63,43 @@ Because no moderation system exists, there is no moderation outage to detect or 
 
 ---
 
+## 🔒 Health & Config Route Access Policy
+
+> **This section documents the absence of health endpoints and config routes, not the presence of them. Read before configuring a reverse proxy.**
+
+### Current State — ❌ No HTTP Server Exists
+
+SocialFlow is a **desktop application** (Electron). It does not run an HTTP server and exposes no network-facing routes of any kind. This means:
+
+- There are no health endpoints (`/health`, `/ready`, `/live` or equivalent).
+- There are no config mutation routes.
+- There is no auth middleware, no RBAC, and no token validation — because there is no server to protect.
+- There is nothing to place behind a reverse proxy.
+
+The Electron main process (`electron/main.js`) creates a `BrowserWindow` and loads either the Vite dev server (development) or a local `dist/index.html` (production). No TCP port is opened by the application itself.
+
+### Route Access Policy Table
+
+| Route | Method | Auth Required | Required Role/Scope | Notes |
+|---|---|---|---|---|
+| — | — | N/A | N/A | No routes exist. No HTTP server is present in this codebase. |
+
+### Config Mutation Authorization
+
+No config mutation endpoints exist. There is no API surface to authorize or restrict.
+
+### Reverse Proxy Hardening
+
+Because no HTTP server exists, no reverse proxy configuration is needed or applicable. If a future version of SocialFlow introduces a server process, this section should be updated with:
+
+- A route access policy table covering all exposed endpoints
+- Auth requirements per route
+- Nginx/Caddy/Traefik snippets blocking any config mutation routes from public access
+
+> This guidance is forward-looking. None of it applies to the current codebase.
+
+---
+
 ## 💎 The SocialFlow Paradigm
 
 SocialFlow is a state-of-the-art **social media management and promoting application** designed to restore sovereignty to digital creators. By converging Large Language Models (LLMs) with Decentralized Ledger Technology (DLT), we provide a suite of management, orchestration, and economic primitives that are transparent, non-custodial, and hyper-automated.
