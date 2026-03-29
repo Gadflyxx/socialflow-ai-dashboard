@@ -1,16 +1,17 @@
 import rateLimit, { Options, RateLimitRequestHandler } from 'express-rate-limit';
 import { Request, Response } from 'express';
 import { getRedisConnection } from '../config/runtime';
+import { config } from '../config/config';
 
 // ---------------------------------------------------------------------------
-// Optional Redis store — only loaded in production to keep dev simple
+// Optional Redis store — attempted unconditionally; falls back to memory
 // ---------------------------------------------------------------------------
 
 /** True once initRateLimiters() resolves — indicates Redis store is active. */
 export let rateLimitRedisEnabled = false;
 
 async function buildStore() {
-  if (process.env.NODE_ENV !== 'production') return undefined;
+  if (config.RATE_LIMIT_STORE === 'memory') return undefined;
 
   try {
     // rate-limit-redis is a peer-optional dep; gracefully skip if absent
@@ -20,7 +21,7 @@ async function buildStore() {
     rateLimitRedisEnabled = true;
     return new RedisStore({ sendCommand: (...args: string[]) => (client as any).call(...args) });
   } catch {
-    // If rate-limit-redis isn't installed, fall back to memory store
+    // If rate-limit-redis isn't installed or Redis is unreachable, fall back to memory store
     return undefined;
   }
 }
